@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "Customer and Superadmin accounts",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "fullName": { "type": "string" },
+        "mobile": { "type": "string" },
+        "role": { "type": "string", "enum": ["customer", "superadmin"] },
+        "createdAt": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "blocked"] },
+        "savedAddresses": { "type": "array" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "products": {
+      "title": "Product",
+      "description": "Perfume & Attar catalog",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "salePrice": { "type": "number" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "topNotes": { "type": "string" },
+        "middleNotes": { "type": "string" },
+        "baseNotes": { "type": "string" },
+        "volume": { "type": "string" },
+        "sku": { "type": "string" },
+        "stockQuantity": { "type": "number" },
+        "featured": { "type": "boolean" },
+        "bestSeller": { "type": "boolean" },
+        "newArrival": { "type": "boolean" },
+        "status": { "type": "string" },
+        "images": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "price", "category"]
+    },
+    "categories": {
+      "title": "Category",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["name"]
+    },
+    "orders": {
+      "title": "Order",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "paymentStatus": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "items": { "type": "array" },
+        "shippingAddress": { "type": "object" },
+        "paymentMethod": { "type": "string" },
+        "trackingNumber": { "type": "string" },
+        "courierCompany": { "type": "string" }
+      },
+      "required": ["orderId", "totalAmount", "status"]
+    },
+    "coupons": {
+      "title": "Coupon",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "discountPercent": { "type": "number" },
+        "discountValue": { "type": "number" },
+        "minOrderAmount": { "type": "number" },
+        "maxDiscount": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["code"]
+    },
+    "banners": {
+      "title": "Banner",
+      "type": "object",
+      "properties": {
+        "heading": { "type": "string" },
+        "subheading": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "link": { "type": "string" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["heading", "imageUrl"]
+    },
+    "settings": {
+      "title": "Settings",
+      "type": "object",
+      "properties": {
+        "brandName": { "type": "string" },
+        "brandTagline": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "contactPhone2": { "type": "string" },
+        "whatsappNumber": { "type": "string" },
+        "supportEmail": { "type": "string" },
+        "contactAddress": { "type": "string" },
+        "googleMapsUrl": { "type": "string" },
+        "aboutText": { "type": "string" },
+        "announcementBarText": { "type": "string" },
+        "instagramUrl": { "type": "string" },
+        "deliveryDetails": { "type": "string" },
+        "adminEmail": { "type": "string" },
+        "adminPassword": { "type": "string" },
+        "razorpayKeyId": { "type": "string" },
+        "razorpayUpiId": { "type": "string" },
+        "razorpayPaymentLink": { "type": "string" },
+        "comboOfferEnabled": { "type": "boolean" },
+        "comboOfferPrice": { "type": "number" },
+        "comboOfferOriginalPrice": { "type": "number" },
+        "comboOfferTitle": { "type": "string" },
+        "comboBottleCount": { "type": "number" },
+        "comboOfferDescription": { "type": "string" },
+        "comboProductIds": { "type": "array" },
+        "deletedIds": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "users",
+      "description": "User profiles"
+    },
+    "products/{productId}": {
+      "schema": "products",
+      "description": "Product catalog"
+    },
+    "categories/{categoryId}": {
+      "schema": "categories",
+      "description": "Product categories"
+    },
+    "orders/{orderId}": {
+      "schema": "orders",
+      "description": "Customer orders"
+    },
+    "coupons/{couponId}": {
+      "schema": "coupons",
+      "description": "Discount coupons"
+    },
+    "banners/{bannerId}": {
+      "schema": "banners",
+      "description": "Home page banners"
+    },
+    "settings/{settingId}": {
+      "schema": "settings",
+      "description": "Global store settings and metadata"
+    }
+  }
+}

@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // -------------------------------------------------------------------------
+    // GLOBAL HELPERS
+    // -------------------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Role-based access check
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        getUserData().role == 'superadmin' || 
+        request.auth.token.email == 'arhanzff2@gmail.com' ||
+        request.auth.token.email == 'niceperfumes@gmail.com' ||
+        request.auth.token.email == 'Niceperfumes@gmail.com' ||
+        request.auth.token.email == 'Khushbooghar@gmail.com'
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // -------------------------------------------------------------------------
+    // VALIDATION HELPERS
+    // -------------------------------------------------------------------------
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role']) &&
+             data.keys().hasOnly(['uid', 'email', 'fullName', 'mobile', 'role', 'createdAt', 'status', 'savedAddresses']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.role in ['customer', 'superadmin'];
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'price', 'category']) &&
+             data.name is string && data.name.size() <= 200 &&
+             data.price is number &&
+             data.category is string;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['orderId', 'totalAmount', 'status']) &&
+             data.orderId is string &&
+             data.totalAmount is number &&
+             data.status is string;
+    }
+
+    // -------------------------------------------------------------------------
+    // DEFAULT DENY
+    // -------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // COLLECTIONS
+    // -------------------------------------------------------------------------
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isSuperAdmin();
+      allow create: if isSignedIn() && isValidUser(incoming()) && incoming().uid == request.auth.uid;
+      allow update: if (isOwner(userId) || isSuperAdmin()) && isValidUser(incoming());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /products/{productId} {
+      allow read, write: if true;
+    }
+
+    match /categories/{categoryId} {
+      allow read, write: if true;
+    }
+
+    match /orders/{orderId} {
+      allow read, list, create, update, delete: if true;
+    }
+
+    match /coupons/{couponId} {
+      allow read, write: if true;
+    }
+
+    match /banners/{bannerId} {
+      allow read, write: if true;
+    }
+
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
+  }
+}
